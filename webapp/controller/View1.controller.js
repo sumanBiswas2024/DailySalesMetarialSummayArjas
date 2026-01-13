@@ -38,6 +38,9 @@ sap.ui.define([
 				this._oModel = this.getOwnerComponent().getModel();
 				this._oSmartFilterBar = this.byId("smartFilterBar");
 
+				// 🔹 Material group description map
+				this._mMatGroupDesc = {};
+
 				// ✅ SAFE Cross App Navigation (FLP only)
 				this._oCrossAppNav = null;
 				if (sap.ushell && sap.ushell.Container) {
@@ -47,38 +50,96 @@ sap.ui.define([
 
 				var that = this;
 
-				this._oModel.metadataLoaded().then(function() {
-					that._oSmartFilterBar.attachInitialized(function() {
+				// this._oModel.metadataLoaded().then(function() {
+				// 	that._oSmartFilterBar.attachInitialized(function() {
 
-						// ✅ SAME default month logic as existing app
-						var oNow = new Date();
-						var sDefaultMonth =
-							oNow.getFullYear().toString() +
-							("0" + (oNow.getMonth() + 1)).slice(-2);
+				// 		// ✅ SAME default month logic as existing app
+				// 		var oNow = new Date();
+				// 		var sDefaultMonth =
+				// 			oNow.getFullYear().toString() +
+				// 			("0" + (oNow.getMonth() + 1)).slice(-2);
 
-						that._oSmartFilterBar.setFilterData({
-							CALMONTH: {
-								ranges: [{
-									operation: "EQ",
-									value1: sDefaultMonth
-								}]
-							}
-						});
+				// 		that._oSmartFilterBar.setFilterData({
+				// 			CALMONTH: {
+				// 				ranges: [{
+				// 					operation: "EQ",
+				// 					value1: sDefaultMonth
+				// 				}]
+				// 			}
+				// 		});
 
-						that.onSearch();
+				// 		that.onSearch();
+				// 	});
+				// });
+				// 1️⃣ Load descriptions in parallel (non-blocking)
+				this._loadMaterialGroupDescriptions();
+
+				// 2️⃣ WAIT for SmartFilterBar initialization
+				this._oSmartFilterBar.attachInitialized(function() {
+
+					// ✅ Apply default month ONLY here
+					var oNow = new Date();
+					var sDefaultMonth =
+						oNow.getFullYear().toString() +
+						("0" + (oNow.getMonth() + 1)).slice(-2);
+
+					that._oSmartFilterBar.setFilterData({
+						CALMONTH: {
+							ranges: [{
+								operation: "EQ",
+								value1: sDefaultMonth
+							}]
+						}
 					});
+
+					// ✅ THIS is mandatory
+					that._oSmartFilterBar.search();
 				});
+
 			},
 			onSearch: function() {
 				BusyIndicator.show(0);
 
-				this._readPieData().then(function(aData) {
+				this._readPieData().then(function(oResult) {
 					BusyIndicator.hide();
-					this._renderPieChart(aData);
+					// this._renderPieChart(aData);
+					this._renderPieChart(oResult.data, oResult.monthTotalQty);
 				}.bind(this)).catch(function() {
 					BusyIndicator.hide();
 				});
 			},
+			_loadMaterialGroupDescriptions: function() {
+
+				var that = this;
+				// BusyIndicator.show(0);
+				var aAllowedGroups = [
+					"Z050", "Z051", "Z069", "Z070",
+					"Z072", "Z073", "Z074", "Z075",
+					"Z077", "Z100", "Z101", "Z102"
+				];
+
+				that._oModel.read("/ZVH_MGRP_DEC", {
+					urlParameters: {
+						$select: "matl_group,txtsh",
+						$top: "1000"
+					},
+					success: function(oData) {
+
+						oData.results.forEach(function(r) {
+							if (r.matl_group && aAllowedGroups.includes(r.matl_group)) {
+								that._mMatGroupDesc[r.matl_group] =
+									r.matl_group + " - " + (r.txtsh || "");
+							}
+						});
+						// BusyIndicator.hide();
+						// 🔹 Optional: refresh chart labels if already rendered
+						if (that.byId("pieChart")) {
+							that.onSearch();
+						}
+					}
+				});
+			},
+
 			_readPieData: function() {
 				var that = this;
 
@@ -207,13 +268,22 @@ sap.ui.define([
 							// Prepare final result
 							var aFinalData = [];
 							var bHasData = false;
+							var fMonthTotalQty = 0;
 
 							for (var m = 0; m < aMaterialGroups.length; m++) {
 								if (aTotals[m] > 0) {
 									bHasData = true;
+									fMonthTotalQty += aTotals[m];
 								}
+								// aFinalData.push({
+								// 	matl_group: aMaterialGroups[m],
+								// 	total_qty: aTotals[m]
+								// });
+								var sCode = aMaterialGroups[m];
+
 								aFinalData.push({
-									matl_group: aMaterialGroups[m],
+									matl_group: sCode, // PURE code (used for navigation)
+									matl_group_text: that._mMatGroupDesc[sCode] || sCode,
 									total_qty: aTotals[m]
 								});
 							}
@@ -224,7 +294,10 @@ sap.ui.define([
 								return;
 							}
 
-							resolve(aFinalData);
+							resolve({
+								data: aFinalData,
+								monthTotalQty: fMonthTotalQty
+							});
 						},
 						error: function(oError) {
 							reject(oError);
@@ -234,7 +307,7 @@ sap.ui.define([
 				});
 			},
 
-			_renderPieChart: function(aData) {
+			_renderPieChart: function(aData, fMonthTotalQty) {
 
 				var oContainer = this.byId("contentBox");
 				var oViz = this.byId("pieChart");
@@ -293,7 +366,8 @@ sap.ui.define([
 				var oDataset = new sap.viz.ui5.data.FlattenedDataset({
 					dimensions: [{
 						name: "Material Group",
-						value: "{matl_group}"
+						// value: "{matl_group}"
+						value: "{matl_group_text}"
 					}],
 					measures: [{
 						name: "Total Quantity",
@@ -313,12 +387,13 @@ sap.ui.define([
 
 				oViz.setVizProperties({
 					title: {
-						text: "Material Group Wise Total Quantity",
+						text: "Material Group Wise Total Quantity Of The Month – " +
+							(fMonthTotalQty ? fMonthTotalQty.toFixed(2) : "0.00"),
 						visible: true
 					},
 					plotArea: {
 						dataLabel: {
-							visible: true
+							visible: false
 						}
 					},
 					legend: {
@@ -426,13 +501,23 @@ sap.ui.define([
 				}
 
 				// 🔹 VizFrame returns dimension text
-				var sMatGroup =
+				// var sMatGroup =
+				// 	aData[0].data["Material Group"] ||
+				// 	aData[0].data["matl_group"];
+
+				// if (!sMatGroup) {
+				// 	return;
+				// }
+				var sText =
 					aData[0].data["Material Group"] ||
 					aData[0].data["matl_group"];
 
-				if (!sMatGroup) {
+				if (!sText) {
 					return;
 				}
+
+				// 🔹 Extract code before hyphen
+				var sMatGroup = sText.split(" - ")[0];
 
 				var oFilterData = this._oSmartFilterBar.getFilterData();
 				var oParams = {};

@@ -33,6 +33,14 @@
 					"localUri": "localService/ZSALES_DAILY_UPDATE_CDS_VAN.xml"
 				}
 			},
+			"ZVH_MGRP_DEC_CDS": {
+				"uri": "/sap/opu/odata/sap/ZVH_MGRP_DEC_CDS/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/ZVH_MGRP_DEC_CDS/metadata.xml"
+				}
+			},
 			"localAnnotations": {
 				"type": "ODataAnnotation",
 				"uri": "annotations/annotation.xml",
@@ -71,11 +79,11 @@
 		"dependencies": {
 			"minUI5Version": "1.71.0",
 			"libs": {
-				"sap.ui.core": {},
 				"sap.m": {},
+				"sap.suite.ui.commons": {},
 				"sap.ui.comp": {},
-				"sap.viz": {},
-				"sap.suite.ui.commons": {}
+				"sap.ui.core": {},
+				"sap.viz": {}
 			}
 		},
 		"contentDensities": {
@@ -91,6 +99,11 @@
 			},
 			"": {
 				"dataSource": "ZSALES_DAILY_UPDATE_CDS",
+				"preload": true,
+				"settings": {}
+			},
+			"ZVH_MGRP_DEC_CDS": {
+				"dataSource": "ZVH_MGRP_DEC_CDS",
 				"preload": true,
 				"settings": {}
 			}

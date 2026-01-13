@@ -90,9 +90,12 @@
 						</PropertyValue>
 					</Record>
 				</Annotation>
+				<Annotations Target="ZSALES_DAILY_UPDATE_CDS.Zsales_Daily_UpdateType/comp_code">
+					<Annotation Term="com.sap.vocabularies.Common.v1.Label" String="Company Code"/>
+				</Annotations>
 				<Annotation Term="UI.SelectionFields">
 					<Collection>
-						<!--<PropertyPath>comp_code</PropertyPath>-->
+						<PropertyPath>comp_code</PropertyPath>
 						<PropertyPath>CALMONTH</PropertyPath>
 						<!--<PropertyPath>CALDAY</PropertyPath>-->
 						<!--<PropertyPath>plant</PropertyPath>-->

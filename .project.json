@@ -17,7 +17,7 @@
     {
       "templateId": "servicecatalog.connectivityComponent",
       "templateVersion": "0.0.0",
-      "dateTimeStamp": "Tue, 06 Jan 2026 09:39:08 GMT"
+      "dateTimeStamp": "Mon, 12 Jan 2026 06:47:08 GMT"
     }
   ],
   "codeCheckingTriggers": {
@@ -45,10 +45,10 @@
     "targetFolder": "dist",
     "excludedFolders": [],
     "excludedFiles": [],
-    "lastBuildDateTime": "Wed, 07 Jan 2026 11:39:28 GMT"
+    "lastBuildDateTime": "Tue, 13 Jan 2026 09:24:24 GMT"
   },
   "mockpreview": {
-    "mockUri": "/sap/opu/odata/sap/ZSALES_DAILY_UPDATE_CDS",
+    "mockUri": "/sap/opu/odata/sap/ZVH_MGRP_DEC_CDS",
     "metadataFilePath": "",
     "loadJSONFiles": false,
     "loadCustomRequests": false,

@@ -114,7 +114,7 @@ sap.ui.define([
 				// BusyIndicator.show(0);
 				var aAllowedGroups = [
 					"Z050", "Z051", "Z069", "Z070",
-					"Z072", "Z073", "Z074", "Z075",
+					"Z072", "Z073", "Z074", "Z075","Z076",
 					"Z077", "Z100", "Z101", "Z102"
 				];
 
@@ -146,7 +146,7 @@ sap.ui.define([
 				// ✅ Hard-coded material groups
 				var aMaterialGroups = [
 					"Z050", "Z051", "Z069", "Z070",
-					"Z072", "Z073", "Z074", "Z075",
+					"Z072", "Z073", "Z074", "Z075","Z076",
 					"Z077", "Z100", "Z101", "Z102"
 				];
 

@@ -19,7 +19,14 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/ui/core/Icon",
 	"sap/m/Text",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/suite/ui/commons/ChartContainer",
+	"sap/suite/ui/commons/ChartContainerContent",
+	"sap/m/Table",
+	"sap/m/Column",
+	"sap/m/ColumnListItem",
+	"sap/m/Label",
+	"sap/m/ObjectNumber"
 ], function(Controller,
 	Filter,
 	FilterOperator,
@@ -28,7 +35,13 @@ sap.ui.define([
 	FeedItem, MessageBox, VBox,
 	Icon,
 	Text,
-	Button) {
+	Button, ChartContainer,
+	ChartContainerContent,
+	Table,
+	Column,
+	ColumnListItem,
+	Label,
+	ObjectNumber) {
 	"use strict";
 
 	return Controller.extend(
@@ -103,7 +116,10 @@ sap.ui.define([
 				this._readPieData().then(function(oResult) {
 					BusyIndicator.hide();
 					// this._renderPieChart(aData);
-					this._renderPieChart(oResult.data, oResult.monthTotalQty);
+					// this._renderPieChart(oResult.data, oResult.monthTotalQty);
+					//With Table View
+					this._renderContent(oResult.data, oResult.monthTotalQty);
+
 				}.bind(this)).catch(function() {
 					BusyIndicator.hide();
 				});
@@ -114,9 +130,11 @@ sap.ui.define([
 				// BusyIndicator.show(0);
 				var aAllowedGroups = [
 					"Z050", "Z051", "Z069", "Z070",
-					"Z072", "Z073", "Z074", "Z075","Z076",
+					"Z072", "Z073", "Z074", "Z075", "Z076",
 					"Z077", "Z100", "Z101", "Z102"
 				];
+				
+				// var oMaterialModel=that.getOwnerComponent().getModel("ZVH_MGRP_DEC_CDS");
 
 				that._oModel.read("/ZVH_MGRP_DEC", {
 					urlParameters: {
@@ -146,7 +164,7 @@ sap.ui.define([
 				// ✅ Hard-coded material groups
 				var aMaterialGroups = [
 					"Z050", "Z051", "Z069", "Z070",
-					"Z072", "Z073", "Z074", "Z075","Z076",
+					"Z072", "Z073", "Z074", "Z075", "Z076",
 					"Z077", "Z100", "Z101", "Z102"
 				];
 
@@ -307,20 +325,140 @@ sap.ui.define([
 				});
 			},
 
-			_renderPieChart: function(aData, fMonthTotalQty) {
+			// _renderPieChart: function(aData, fMonthTotalQty) {
+
+			// 	var oContainer = this.byId("contentBox");
+			// 	var oViz = this.byId("pieChart");
+
+			// 	oContainer.removeAllItems();
+
+			// 	// ==============================
+			// 	// NO DATA UI
+			// 	// ==============================
+			// 	if (!aData || aData.length === 0) {
+
+			// 		// 🔴 IMPORTANT: hide chart
+			// 		oViz.setVisible(false);
+
+			// 		var oNoDataVBox = new sap.m.VBox({
+			// 			width: "100%",
+			// 			height: "400px",
+			// 			justifyContent: "Center",
+			// 			alignItems: "Center",
+			// 			items: [
+			// 				new sap.ui.core.Icon({
+			// 					src: "sap-icon://database",
+			// 					size: "4rem",
+			// 					color: "#6a6d70"
+			// 				}),
+			// 				new sap.m.Text({
+			// 					text: "No Data Available",
+			// 					design: "Bold",
+			// 					textAlign: "Center"
+			// 				}),
+			// 				new sap.m.Text({
+			// 					text: "No records found for the selected filters.",
+			// 					textAlign: "Center"
+			// 				}),
+			// 				new sap.m.Button({
+			// 					text: "Try Again",
+			// 					icon: "sap-icon://refresh",
+			// 					type: "Emphasized",
+			// 					press: function() {
+			// 						this.onSearch();
+			// 					}.bind(this)
+			// 				})
+			// 			]
+			// 		});
+
+			// 		oContainer.addItem(oNoDataVBox);
+			// 		return;
+			// 	}
+
+			// 	// ==============================
+			// 	// DATA EXISTS → SHOW CHART
+			// 	// ==============================
+			// 	oViz.setVisible(true);
+			// 	oContainer.addItem(oViz);
+
+			// 	var oDataset = new sap.viz.ui5.data.FlattenedDataset({
+			// 		dimensions: [{
+			// 			name: "Material Group",
+			// 			// value: "{matl_group}"
+			// 			value: "{matl_group_text}"
+			// 		}],
+			// 		measures: [{
+			// 			name: "Total Quantity",
+			// 			value: "{total_qty}"
+			// 		}],
+			// 		data: {
+			// 			path: "/data"
+			// 		}
+			// 	});
+
+			// 	var oJsonModel = new sap.ui.model.json.JSONModel({
+			// 		data: aData
+			// 	});
+
+			// 	oViz.setDataset(oDataset);
+			// 	oViz.setModel(oJsonModel);
+
+			// 	oViz.setVizProperties({
+			// 		title: {
+			// 			text: "Material Group Wise Total Quantity Of The Month – " +
+			// 				(fMonthTotalQty ? fMonthTotalQty.toFixed(2) : "0.00"),
+			// 			visible: true
+			// 		},
+			// 		plotArea: {
+			// 			dataLabel: {
+			// 				visible: false
+			// 			}
+			// 		},
+			// 		legend: {
+			// 			isScrollable: true
+			// 		}
+			// 	});
+
+			// 	oViz.removeAllFeeds();
+			// 	oViz.addFeed(new sap.viz.ui5.controls.common.feeds.FeedItem({
+			// 		uid: "color",
+			// 		type: "Dimension",
+			// 		values: ["Material Group"]
+			// 	}));
+			// 	oViz.addFeed(new sap.viz.ui5.controls.common.feeds.FeedItem({
+			// 		uid: "size",
+			// 		type: "Measure",
+			// 		values: ["Total Quantity"]
+			// 	}));
+
+			// 	// ==============================
+			// 	// ADD VIZ POPOVER (HERE ONLY)
+			// 	// ==============================
+			// 	if (!this._oVizPopover) {
+			// 		this._oVizPopover = new sap.viz.ui5.controls.Popover({
+			// 			formatString: ["#,##0.00"]
+			// 		});
+			// 	}
+			// 	this._oVizPopover.connect(oViz.getVizUid());
+
+			// 	// ✅ ADD THIS
+			// 	oViz.detachSelectData(this.onPieSelect, this);
+			// 	oViz.attachSelectData(this.onPieSelect, this);
+			// },
+
+			// With Table View 
+			_renderContent: function(aData, fMonthTotalQty) {
 
 				var oContainer = this.byId("contentBox");
-				var oViz = this.byId("pieChart");
-
+				var oPie = this.byId("pieChart"); //  REUSE FROM VIEW
 				oContainer.removeAllItems();
 
-				// ==============================
-				// NO DATA UI
-				// ==============================
+				/* ==============================
+				   NO DATA HANDLING
+				============================== */
 				if (!aData || aData.length === 0) {
 
-					// 🔴 IMPORTANT: hide chart
-					oViz.setVisible(false);
+					oPie.setVisible(false);
 
 					var oNoDataVBox = new sap.m.VBox({
 						width: "100%",
@@ -335,20 +473,16 @@ sap.ui.define([
 							}),
 							new sap.m.Text({
 								text: "No Data Available",
-								design: "Bold",
-								textAlign: "Center"
+								design: "Bold"
 							}),
 							new sap.m.Text({
-								text: "No records found for the selected filters.",
-								textAlign: "Center"
+								text: "No records found for the selected filters."
 							}),
 							new sap.m.Button({
 								text: "Try Again",
 								icon: "sap-icon://refresh",
 								type: "Emphasized",
-								press: function() {
-									this.onSearch();
-								}.bind(this)
+								press: this.onSearch.bind(this)
 							})
 						]
 					});
@@ -357,16 +491,27 @@ sap.ui.define([
 					return;
 				}
 
-				// ==============================
-				// DATA EXISTS → SHOW CHART
-				// ==============================
-				oViz.setVisible(true);
-				oContainer.addItem(oViz);
+				/* ==============================
+				   DATA EXISTS
+				============================== */
+				oPie.setVisible(true);
+				oContainer.addItem(oPie);
 
+				/* ==============================
+				   POPOVER (HOVER + SELECT)
+				============================== */
+				if (!this._oVizPopover) {
+					this._oVizPopover = new sap.viz.ui5.controls.Popover({
+						formatString: ["#,##0.00"]
+					});
+				}
+
+				/* ==============================
+				   DATASET + MODEL
+				============================== */
 				var oDataset = new sap.viz.ui5.data.FlattenedDataset({
 					dimensions: [{
 						name: "Material Group",
-						// value: "{matl_group}"
 						value: "{matl_group_text}"
 					}],
 					measures: [{
@@ -382,10 +527,13 @@ sap.ui.define([
 					data: aData
 				});
 
-				oViz.setDataset(oDataset);
-				oViz.setModel(oJsonModel);
+				oPie.setDataset(oDataset);
+				oPie.setModel(oJsonModel);
 
-				oViz.setVizProperties({
+				/* ==============================
+				   VIZ PROPERTIES (CRITICAL)
+				============================== */
+				oPie.setVizProperties({
 					title: {
 						text: "Material Group Wise Total Quantity Of The Month – " +
 							(fMonthTotalQty ? fMonthTotalQty.toFixed(2) : "0.00"),
@@ -398,35 +546,91 @@ sap.ui.define([
 					},
 					legend: {
 						isScrollable: true
+					},
+					tooltip: { // ✅ THIS ENABLES HOVER
+						visible: true
 					}
 				});
 
-				oViz.removeAllFeeds();
-				oViz.addFeed(new sap.viz.ui5.controls.common.feeds.FeedItem({
+				oPie.removeAllFeeds();
+				oPie.addFeed(new sap.viz.ui5.controls.common.feeds.FeedItem({
 					uid: "color",
 					type: "Dimension",
 					values: ["Material Group"]
 				}));
-				oViz.addFeed(new sap.viz.ui5.controls.common.feeds.FeedItem({
+				oPie.addFeed(new sap.viz.ui5.controls.common.feeds.FeedItem({
 					uid: "size",
 					type: "Measure",
 					values: ["Total Quantity"]
 				}));
 
-				// ==============================
-				// ADD VIZ POPOVER (HERE ONLY)
-				// ==============================
-				if (!this._oVizPopover) {
-					this._oVizPopover = new sap.viz.ui5.controls.Popover({
-						formatString: ["#,##0.00"]
-					});
-				}
-				this._oVizPopover.connect(oViz.getVizUid());
+				/* ==============================
+				   POPOVER + NAVIGATION
+				============================== */
+				this._oVizPopover.connect(oPie.getVizUid());
+				oPie.detachSelectData(this.onPieSelect, this);
+				oPie.attachSelectData(this.onPieSelect, this);
 
-				// ✅ ADD THIS
-				oViz.detachSelectData(this.onPieSelect, this);
-				oViz.attachSelectData(this.onPieSelect, this);
+				/* ==============================
+				   TABLE
+				============================== */
+				var oTable = new sap.m.Table({
+					columns: [
+						new sap.m.Column({
+							header: new sap.m.Label({
+								text: "Material Group"
+							})
+						}),
+						new sap.m.Column({
+							header: new sap.m.Label({
+								text: "Total Quantity"
+							})
+						})
+					]
+				});
+
+				oTable.bindItems({
+					path: "/data",
+					template: new sap.m.ColumnListItem({
+						cells: [
+							new sap.m.Text({
+								text: "{matl_group_text}"
+							}),
+							new sap.m.ObjectNumber({
+								number: "{total_qty}"
+							})
+						]
+					})
+				});
+				oTable.setModel(oJsonModel);
+
+				/* ==============================
+				   CHART CONTAINER
+				============================== */
+				var oChartContent = new sap.suite.ui.commons.ChartContainerContent({
+					icon: "sap-icon://pie-chart",
+					title: "Chart View",
+					content: [oPie]
+				});
+
+				var oTableContent = new sap.suite.ui.commons.ChartContainerContent({
+					icon: "sap-icon://table-chart",
+					title: "Table View",
+					content: [oTable]
+				});
+
+				var oChartContainer = new sap.suite.ui.commons.ChartContainer({
+					showFullScreen: true,
+					autoAdjustHeight: true,
+					content: [
+						oChartContent,
+						oTableContent
+					]
+				});
+
+				oContainer.addItem(oChartContainer);
 			},
+
 			// onPieSelect: function(oEvent) {
 
 			// 	// Safety check
@@ -562,13 +766,57 @@ sap.ui.define([
 					return;
 				}
 
-				this._oCrossAppNav.toExternal({
-					target: {
-						semanticObject: "ZSalesDashboard",
-						action: "dailySalesUpd"
-					},
-					params: oParams
-				});
+				// this._oCrossAppNav.toExternal({
+				// 	target: {
+				// 		semanticObject: "ZSalesDashboard",
+				// 		action: "dailySalesUpd"
+				// 	},
+				// 	params: oParams
+				// });
+				
+				/*  ==============================
+					   NEW TAB NAVIGATION (SAFE)
+					============================== */
+
+				try {
+					// 1️⃣ Create FLP hash
+					var sHash = this._oCrossAppNav.hrefForExternal({
+						target: {
+							semanticObject: "ZSalesDashboard",
+							action: "dailySalesUpd"
+						},
+						params: oParams
+					});
+
+					if (!sHash) {
+						throw new Error("Failed to create navigation hash");
+					}
+
+					// 2️⃣ Build full FLP URL
+					var sUrl = window.location.origin +
+						window.location.pathname +
+						sHash;
+
+					// 3️⃣ Open in new tab
+					var oNewWindow = window.open(sUrl, "_blank");
+
+					// 4️⃣ Popup blocker handling
+					if (!oNewWindow) {
+						MessageBox.warning(
+							"Popup blocked by browser. Please allow popups for this site."
+						);
+					}
+
+				} catch (e) {
+					// 🔴 Fallback to same-tab navigation
+					this._oCrossAppNav.toExternal({
+						target: {
+							semanticObject: "ZSalesDashboard",
+							action: "dailySalesUpd"
+						},
+						params: oParams
+					});
+				}
 			}
 
 		});

@@ -133,7 +133,7 @@ sap.ui.define([
 					"Z072", "Z073", "Z074", "Z075", "Z076",
 					"Z077", "Z100", "Z101", "Z102"
 				];
-				
+
 				// var oMaterialModel=that.getOwnerComponent().getModel("ZVH_MGRP_DEC_CDS");
 
 				that._oModel.read("/ZVH_MGRP_DEC", {
@@ -621,7 +621,7 @@ sap.ui.define([
 
 				var oChartContainer = new sap.suite.ui.commons.ChartContainer({
 					showFullScreen: true,
-					autoAdjustHeight: true,
+					autoAdjustHeight: true, // IMPORTANT
 					content: [
 						oChartContent,
 						oTableContent
@@ -773,7 +773,7 @@ sap.ui.define([
 				// 	},
 				// 	params: oParams
 				// });
-				
+
 				/*  ==============================
 					   NEW TAB NAVIGATION (SAFE)
 					============================== */

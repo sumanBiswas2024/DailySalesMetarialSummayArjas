@@ -40,12 +40,12 @@
     }
   },
   "build": {
-    "buildRequired": false,
+    "buildRequired": true,
     "sourceFolder": "webapp",
     "targetFolder": "dist",
     "excludedFolders": [],
     "excludedFiles": [],
-    "lastBuildDateTime": "Wed, 14 Jan 2026 07:12:47 GMT"
+    "lastBuildDateTime": "Thu, 15 Jan 2026 09:28:35 GMT"
   },
   "mockpreview": {
     "mockUri": "/sap/opu/odata/sap/ZVH_MGRP_DEC_CDS",

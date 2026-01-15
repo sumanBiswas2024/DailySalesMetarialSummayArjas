@@ -1,24 +1,53 @@
-<!--<mvc:View controllerName="ZDailySalesMaterialSummaryArjas.controller.View1" xmlns:html="http://www.w3.org/1999/xhtml"-->
-<!--	xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns="sap.m">-->
-<!--	<App>-->
-<!--		<pages>-->
-<!--			<Page title="{i18n>title}">-->
-<!--				<content></content>-->
-<!--			</Page>-->
-<!--		</pages>-->
-<!--	</App>-->
+<!--<mvc:View controllerName="ZDailySalesMaterialSummaryArjas.controller.View1" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"-->
+<!--	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:viz="sap.viz.ui5.controls">-->
+<!-- Outer container takes full screen -->
+<!--	<VBox width="100%" height="100%" class="sapUiSizeCompact">-->
+<!-- Smart Filter Bar -->
+<!--		<smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="Zsales_Daily_Update" useToolbar="true" showMessages="true"-->
+<!--			persistencyKey="SmartFilterBarKey" search=".onSearch"/>-->
+<!-- Scrollable content area -->
+<!--		<ScrollContainer width="100%" height="100%" vertical="true" horizontal="false" focusable="true">-->
+<!--			<VBox id="contentBox" width="100%" class="sapUiSmallMarginTop">-->
+<!-- Reused Pie Chart -->
+<!--				<viz:VizFrame id="pieChart" vizType="pie" width="100%" height="500px"/>-->
+<!--			</VBox>-->
+<!--		</ScrollContainer>-->
+<!--	</VBox>-->
+<!--</mvc:View>-->
+<!--<mvc:View controllerName="ZDailySalesMaterialSummaryArjas.controller.View1" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"-->
+<!--	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:viz="sap.viz.ui5.controls">-->
+<!--	<ScrollContainer id="mainScroll" width="100%" height="100vh" vertical="true" horizontal="false" focusable="true" class="sapUiSizeCompact">-->
+<!--		<VBox width="100%">-->
+<!--Smart Filter Bar -->
+<!--			<smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="Zsales_Daily_Update" useToolbar="true" showMessages="true"-->
+<!--				persistencyKey="SmartFilterBarKey" search=".onSearch"/>-->
+<!--				<IconTabBar id="hiddenITB" expandable="false" stretchContentHeight="true" applyContentPadding="false" class="hiddenIconTabBar">-->
+<!--					<items>-->
+<!--						<IconTabFilter key="MAIN" text="">-->
+<!--							<VBox id="contentBox" width="100%" class="sapUiSmallMarginTop">-->
+<!--								<viz:VizFrame id="pieChart" vizType="pie" width="100%" height="500px"/>-->
+<!--							</VBox>-->
+<!--						</IconTabFilter>-->
+<!--						<IconTabFilter key="DUMMY"/>-->
+<!--					</items>-->
+<!--				</IconTabBar>-->
+<!--		</VBox>-->
+<!--	</ScrollContainer>-->
 <!--</mvc:View>-->
 <mvc:View controllerName="ZDailySalesMaterialSummaryArjas.controller.View1" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
 	xmlns:smartFilterBar="sap.ui.comp.smartfilterbar" xmlns:viz="sap.viz.ui5.controls">
-	<ScrollContainer id="mainScroll" width="100%" height="100%" horizontal="true" vertical="true" focusable="true" class="sapUiSizeCompact">
-		<VBox class="sapUiSmallMargin">
-			<smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="Zsales_Daily_Update" useToolbar="true" showMessages="true"
-				persistencyKey="SmartFilterBarKey" search=".onSearch"/>
-			<!-- THIS IS THE MISSING CONTAINER -->
-			<VBox id="contentBox" width="100%" class="sapUiSmallMarginTop">
-				<!-- Pie Chart stays INSIDE contentBox -->
-				<viz:VizFrame id="pieChart" vizType="pie" height="500px" width="100%"/>
-			</VBox>
+	<VBox width="100%" class="sapUiSizeCompact">
+		<!-- Fixed Smart Filter Bar -->
+		<smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="Zsales_Daily_Update" useToolbar="true" showMessages="true"
+			persistencyKey="SmartFilterBarKey" search=".onSearch"/>
+		<!-- 🔒 Fixed-height viewport for analytics -->
+		<VBox id="analyticsViewport" width="100%" height="calc(100vh - 11rem)" class="analyticsViewport">
+			<!-- ✅ ONLY this area scrolls -->
+			<ScrollContainer width="100%" height="100%" vertical="true" horizontal="false" focusable="true">
+				<VBox id="contentBox" width="100%" class="sapUiSmallMarginTop">
+					<viz:VizFrame id="pieChart" vizType="pie" width="100%" height="500px"/>
+				</VBox>
+			</ScrollContainer>
 		</VBox>
-	</ScrollContainer>
+	</VBox>
 </mvc:View>

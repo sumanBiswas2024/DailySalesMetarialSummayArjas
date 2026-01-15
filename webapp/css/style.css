@@ -1,1 +1,96 @@
-/* Enter your custom styles here */
+/* =========================================
+   Global height fix (FLP + ScrollContainer)
+   ========================================= */
+
+/*html,*/
+/*body,*/
+/*.sapUiBody {*/
+/*    height: 100%;*/
+/*}*/
+
+/* =========================================
+   SmartFilterBar spacing
+   ========================================= */
+
+/*#smartFilterBar {*/
+/*    margin-bottom: 1rem;*/
+/*}*/
+
+/* =========================================
+   Allow dynamic content growth (CRITICAL)
+   ========================================= */
+
+/* Content box must expand vertically */
+/*#contentBox {*/
+/*    height: auto !important;*/
+/*    min-height: 1px;*/
+/*}*/
+
+/* ChartContainer must NOT lock height */
+/*.sapSuiteUiCommonsChartContainer {*/
+/*    height: auto !important;*/
+/*    max-height: none !important;*/
+/*    overflow: visible !important;*/
+/*}*/
+
+/* Prevent hidden overflow inside chart content */
+/*.sapSuiteUiCommonsChartContainerContent {*/
+/*    overflow: visible !important;*/
+/*}*/
+
+/* =========================================
+   Invisible IconTabBar header (layout-safe)
+   ========================================= */
+
+/*.hiddenIconTabBar .sapMITBHead {*/
+/*    height: 0 !important;*/
+/*    min-height: 0 !important;*/
+/*    max-height: 0 !important;*/
+/*    overflow: hidden !important;*/
+/*    opacity: 0 !important;*/
+/*    pointer-events: none !important;*/
+/*}*/
+
+/*.hiddenIconTabBar .sapMITBContent {*/
+/*    padding-top: 0 !important;*/
+/*    border-top: none !important;*/
+/*}*/
+
+/*.hiddenIconTabBar.sapMITB {*/
+/*    height: auto !important;*/
+/*}*/
+
+
+
+html,
+body,
+.sapUiBody {
+    height: 100%;
+}
+
+/* Hide IconTabBar header but keep layout */
+.hiddenIconTabBar .sapMITBHead {
+    height: 0 !important;
+    overflow: hidden !important;
+}
+
+.hiddenIconTabBar .sapMITBContent {
+    padding-top: 0 !important;
+}
+
+/* Do NOT lock full page height */
+html,
+body,
+.sapUiBody {
+    height: auto;
+}
+
+/* Fixed analytics viewport */
+.analyticsViewport {
+    overflow: hidden;
+}
+
+/* Let content grow naturally */
+#contentBox {
+    height: auto;
+}
